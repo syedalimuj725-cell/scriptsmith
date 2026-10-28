@@ -4,8 +4,19 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 3
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+    # Major upgrades (for example React 18 -> 19) can break the app, so they
+    # are reviewed by hand. Security fixes still arrive as Dependabot alerts.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      github-actions:
+        patterns: ["*"]
