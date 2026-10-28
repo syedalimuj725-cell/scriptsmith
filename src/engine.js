@@ -13,17 +13,20 @@ const KNOWN_FOLDERS = {
   temp: { label: "Temp", ps: `"$env:TEMP"`, py: `Path(os.environ.get("TEMP", "/tmp"))` },
 };
 
+// A path the user typed becomes a single-quoted PowerShell string, so "$(...)",
+// "$var" and backticks stay literal text and can never run as code. Trailing
+// backslashes are dropped so the Python raw string stays valid.
+function literalPath(raw) {
+  const v = raw.trim().replace(/[\\/]+$/, "") || raw.trim();
+  return { label: v, ps: `'${v.replace(/'/g, "''")}'`, py: `Path(r"${v}")`, literal: true };
+}
+
 function extractFolder(text, fallback = "downloads") {
-  const quoted = text.match(/["']([A-Za-z]:\\[^"']+|\/[^"']+)["']/);
-  if (quoted) {
-    const v = quoted[1];
-    return { label: v, ps: `"${v}"`, py: `Path(r"${v}")`, literal: true };
-  }
+  // Opening and closing quote must be the same kind, so "C:\Users\O'Neil" works.
+  const quoted = text.match(/(["'])([A-Za-z]:\\(?:(?!\1).)+|\/(?:(?!\1).)+)\1/);
+  if (quoted) return literalPath(quoted[2]);
   const drive = text.match(/([A-Za-z]:\\[\w\\ .\-()]+?)(?=\s+(?:older|and|every|that|to|for)\b|[.,]|$)/);
-  if (drive) {
-    const v = drive[1].trim();
-    return { label: v, ps: `"${v}"`, py: `Path(r"${v}")`, literal: true };
-  }
+  if (drive) return literalPath(drive[1]);
   // A whole drive: "on C drive", "the D: drive", "on C:" (skips "a drive", which is an article).
   const whole =
     text.match(/\b(?:on|in|of|from|across)\s+(?:the\s+)?([b-z])\s*:?\s*drive\b/i) ||

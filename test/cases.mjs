@@ -37,6 +37,12 @@ export const CASES = [
   ["export installed software list", "installed"],
   ["sort files in desktop by extension", "organize", { folder: "Desktop" }],
 
+  // Hostile or awkward paths: must stay literal text in the generated script.
+  [`delete files older than 5 days in "C:\\Data\\$(Remove-Item C:\\ -Recurse)"`, "delete-old"],
+  [`delete files older than 5 days in "C:\\Users\\O'Neil\\Logs"`, "delete-old", { folder: "C:\\Users\\O'Neil\\Logs" }],
+  [`delete files older than 5 days in "C:\\Data\\\`whoami\`"`, "delete-old"],
+  [`delete files older than 5 days in "C:\\Reports\\"`, "delete-old", { folder: "C:\\Reports" }],
+
   // Must NOT match anything (these used to hit the wrong template).
   ["update my backend server", null],
   ["send an email to my boss", null],
