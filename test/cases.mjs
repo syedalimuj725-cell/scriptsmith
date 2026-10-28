@@ -1,0 +1,46 @@
+// Shared test cases: [request, expected template id or null for "no match", expected chip values]
+export const CASES = [
+  // Every library example must match its own template.
+  ["delete files older than 30 days in downloads", "delete-old", { folder: "Downloads", "older than": "30 days" }],
+  ["clear temp files and cache", "clean-temp"],
+  ["restart the spooler service", "service", { action: "Restart", service: "spooler" }],
+  ["kill the chrome process", "kill-proc", { process: "chrome" }],
+  ["find the top 10 largest files on C drive", "large-files", { folder: "C:\\", top: "10" }],
+  ["backup my documents folder to a zip", "backup", { source: "Documents" }],
+  [`rename files in downloads, replace "IMG_" with "vacation_"`, "rename", { find: "IMG_", replace: "vacation_" }],
+  ["organize my downloads folder by file type", "organize", { folder: "Downloads" }],
+  ["show disk space on all drives", "disk"],
+  ["check if 10.0.0.5 is online", "ping", { host: "10.0.0.5" }],
+  ["export a list of installed programs to csv", "installed"],
+  ["get system info and specs", "sysinfo"],
+  ["find duplicate files in my pictures folder", "duplicates", { folder: "Pictures" }],
+  ["schedule a script to run every day at 7am", "schedule", { "runs at": "07:00 daily" }],
+
+  // Other phrasings and slot extraction.
+  ["delete log files older than 14 days in downloads", "delete-old", { "older than": "14 days", type: ".log" }],
+  ["remove pdf files older than 2 weeks from desktop", "delete-old", { folder: "Desktop", "older than": "14 days", type: ".pdf" }],
+  [`delete files older than 3 months in "C:\\Logs\\App"`, "delete-old", { folder: "C:\\Logs\\App", "older than": "90 days" }],
+  ["stop the wuauserv service", "service", { action: "Stop", service: "wuauserv" }],
+  ["start service called Spooler", "service", { action: "Start", service: "Spooler" }],
+  ["kill the outlook process", "kill-proc", { process: "outlook" }],
+  ["end the teams app", "kill-proc", { process: "teams" }],
+  ["find the top 5 biggest files over 2 GB in documents", "large-files", { folder: "Documents", top: "5", "min size": "2048 MB" }],
+  ["what is taking up space on the D: drive", "large-files", { folder: "D:\\" }],
+  ["ping server01.corp.local", "ping", { host: "server01.corp.local" }],
+  ["check if printer-03 is online", "ping", { host: "printer-03" }],
+  ["schedule a script to run every day at 6:30pm", "schedule", { "runs at": "18:30 daily" }],
+  ["backup my desktop", "backup", { source: "Desktop" }],
+  ["find duplicate photos in pictures", "duplicates", { folder: "Pictures" }],
+  ["find duplicates in downloads", "duplicates"],
+  ["clean up the temp folder", "clean-temp"],
+  ["show me how much disk space is free", "disk"],
+  ["export installed software list", "installed"],
+  ["sort files in desktop by extension", "organize", { folder: "Desktop" }],
+
+  // Must NOT match anything (these used to hit the wrong template).
+  ["update my backend server", null],
+  ["send an email to my boss", null],
+  ["make me a sandwich", null],
+  ["unzip the archive in downloads", null],
+  ["map a network drive", null],
+];

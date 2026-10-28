@@ -1,5 +1,9 @@
 # Scriptsmith
 
+[![Tests](https://github.com/syedalimuj725-cell/scriptsmith/actions/workflows/test.yml/badge.svg)](https://github.com/syedalimuj725-cell/scriptsmith/actions/workflows/test.yml)
+
+**Try it live:** https://syedalimuj725-cell.github.io/scriptsmith/
+
 Type or speak a plain-English request. Get a ready-to-review PowerShell script and a Python script.
 
 Scriptsmith runs 100% offline. It uses no AI model. A rule-based engine reads your words, pulls out the details, and fills a hand-written script template.
@@ -40,6 +44,16 @@ Scriptsmith runs 100% offline. It uses no AI model. A rule-based engine reads yo
 2. **Slot extraction.** Small parsers pull out folders, days, file types, sizes, hostnames, service names, and times.
 3. **Generation.** The template turns those values into PowerShell and Python.
 
+## Testing
+
+Every push runs an automatic test suite on GitHub Actions:
+
+- **Engine tests:** 40+ requests check that each one matches the right automation and pulls out the right values. Some requests must match nothing, so the app does not guess.
+- **Python check:** every generated `.py` script must compile, with syntax warnings treated as errors.
+- **PowerShell check:** on Windows, every generated `.ps1` script goes through the real PowerShell parser and PSScriptAnalyzer.
+
+Run the engine tests yourself with `npm test`.
+
 ## Run it locally
 
 ```bash
@@ -53,7 +67,7 @@ A GitHub Actions workflow builds the app and publishes it to GitHub Pages on eve
 
 ## Add a new automation
 
-Add an entry to the `TEMPLATES` array in `src/App.jsx`. Each entry needs keyword groups, a `parse` function, `chips` for the readout, and `ps` and `py` generators.
+Add an entry to the `TEMPLATES` array in `src/engine.js`, then add a test request to `test/cases.mjs`. Each entry needs keyword groups, a `parse` function, `chips` for the readout, and `ps` and `py` generators.
 
 ## Tech
 

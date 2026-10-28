@@ -1,0 +1,45 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  engine-and-python:
+    name: Engine tests + Python syntax
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Intent and slot tests
+        run: node --test test/engine.test.mjs
+      - name: Generate every script
+        run: node test/generate.mjs
+      - name: Python syntax check (warnings count as errors)
+        run: python -W error::SyntaxWarning -m py_compile generated/*.py && echo "All Python scripts compile"
+
+  powershell:
+    name: PowerShell parse + PSScriptAnalyzer (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Generate every script
+        run: node test/generate.mjs
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: Install-Module PSScriptAnalyzer -Force -Scope CurrentUser
+      - name: Parse and lint
+        shell: pwsh
+        run: ./test/check-powershell.ps1
